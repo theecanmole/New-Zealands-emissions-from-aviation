@@ -6,7 +6,7 @@ New Zealand's international aviation emissions (from the arrival and departure o
 
 These emissions can be obtained from the [detailed spreadsheet](https://environment.govt.nz/assets/publications/climate-change/Time-series-emissions-data-by-category-presented-in-AR4-Excel-xlsx.xlsx) accompanying [New Zealand’s Greenhouse Gas Inventory 1990 – 2021 MfE 2023 Report ME 1750](https://environment.govt.nz/publications/new-zealands-greenhouse-gas-inventory-1990-2021/)
 
-Here is the chart of actual final allocation of emission units compared to the estimated actual steel emissions from the Greenhouse Gas Inventory.
+Here is the chart of domestic aviation emissions and international aviation emissions and total aviation emissions.
 
 ![](NZ-aviation-ghgs-2021-720.svg)
 
