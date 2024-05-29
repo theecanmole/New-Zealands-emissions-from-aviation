@@ -6,26 +6,30 @@ library(readxl)
 library(dplyr)
 # download detailed emissions data by category from Ministry for the Environment
  
-# https://environment.govt.nz/publications/new-zealands-greenhouse-gas-inventory-1990-2021/ 13 April 2023 Reference: ME 1750 
-# download 1990 2021 Time series by category spreadsheet
-download.file("https://environment.govt.nz/assets/publications/climate-change/Time-series-emissions-data-by-category-presented-in-AR4-Excel-xlsx.xlsx","Time-series-emissions-data-by-category-presented-in-AR4-Excel-xlsx")
+# https://environment.govt.nz/publications/new-zealands-greenhouse-gas-inventory-1990-2022/ 18 April 2024 Reference: ME 1824 
+# download 1990 2022 Time series by category spreadsheet
+download.file("https://environment.govt.nz/assets/publications/GhG-Inventory/GHG-inventory-2024/Time-series-emissions-data-in-AR4-1990-to-2022-from-NZGHGI-2024.xlsx","Time-series-emissions-data-in-AR4-1990-to-2022-from-NZGHGI-2024.xlsx")
 trying URL 'https://environment.govt.nz/assets/publications/climate-change/Time-series-emissions-data-by-category-presented-in-AR4-Excel-xlsx.xlsx'
 Content type 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' length 1497400 bytes (1.4 MB)
 ==================================================
 downloaded 1.4 MB 
 
 # List all sheets in an excel spreadsheet 
-excel_sheets("Time-series-emissions-data-by-category-presented-in-AR4-Excel-xlsx")
-[1] "AR4 - All gases" "AR4 - CO2"       "AR4 - CH4"       "AR4 - N2O"      
-[5] "AR4 - HFCs"      "AR4 - PFCs"      "AR4 - SF6"     
+excel_sheets("Time-series-emissions-data-in-AR4-1990-to-2022-from-NZGHGI-2024.xlsx")
+[1] "All gases" "CO2"       "CH4"       "N2O"       "HFCs"      "PFCs"     
+[7] "SF6"  
 
 # read in inventory data in a HUGE block including Years row 11 as column headers
 
-data <- read_excel("Time-series-emissions-data-by-category-presented-in-AR4-Excel-xlsx", sheet = "AR4 - All gases",skip=10,col_types = c("guess"))  
+data <- read_excel("Time-series-emissions-data-in-AR4-1990-to-2022-from-NZGHGI-2024.xlsx", sheet = "All gases",skip=10,col_types = c("guess"))  
+
 str(data) 
-tibble [1,085 × 34] (S3: tbl_df/tbl/data.frame)
- $ Category code: chr [1:1085] "Sectors Totals" "Sectors Totals" "1" "1.AA" ...
- $ Category name: chr [1:1085] "[Sectors/Totals] (Net, with LULUCF)" "[Sectors/Totals] (Gross, excluding LULUCF)" "[1.  Energy]" "[1.AA  Fuel Combustion - Sectoral approach]" ... 
+tibble [1,085 × 35] (S3: tbl_df/tbl/data.frame)
+ $ Link to CRF import file: chr [1:1085] "Sectors Totals" "Sectors Totals" "1" "1.AA" ...
+ $ Name on tab            : chr [1:1085] "[Sectors/Totals] (Net, with LULUCF)" "[Sectors/Totals] (Gross, excluding LULUCF)" "[1.  Energy]" "[1.AA  Fuel Combustion - Sectoral approach]" ...
+ $ 1990                   : num [1:1085] 41368 65665 23882 22449 5987 ...
+ $ 1991                   : num [1:1085] 40426 66610 24346 22848 6097 ...
+ $ 1992                   : num [1:1085] 42424 67854 26192 24738 7588 ...
 
 # row 93 of sheet    [1.A.3.a  Domestic Aviation]       = row 82 of 'data'
 # row 322 of sheet   [1.D.1.a  International Aviation]  = row 311 of 'data'
@@ -59,7 +63,7 @@ data[82,2]
   <chr>                       
 1 [1.A.3.a  Domestic Aviation] 
 
-domestic_aviation <- as.numeric(data[82,3:34])
+domestic_aviation <- as.numeric(data[82,3:35])
 
 data[311,]
 # A tibble: 1 × 34
@@ -73,14 +77,14 @@ data[311,]
 #   `2015` <dbl>, `2016` <dbl>, `2017` <dbl>, `2018` <dbl>, `2019` <dbl>,
 #   `2020` <dbl>, `2021` <dbl> 
 
-international_aviation <- as.numeric(data[311,3:34])
+international_aviation <- as.numeric(data[311,3:35])
 
-year <- c(1990:2021)
+year <- c(1990:2022)
 
 nz_aviation <-as.data.frame(cbind(year,domestic_aviation,international_aviation)) 
 
 str(nz_aviation) 
-'data.frame':	32 obs. of  3 variables:
+'data.frame':	33 obs. of  3 variables:
  $ year                  : num  1990 1991 1992 1993 1994 ...
  $ domestic_aviation     : num  948 822 814 942 1088 ...
  $ international_aviation: num  1333 1293 1269 1295 1292 ... 
@@ -94,7 +98,7 @@ svg(filename="NZ-aviation-ghgs-2021-720.svg", width = 8, height = 6, pointsize =
 #png("NZ-aviation-ghgs-2021-560.png", bg="white", width=560, height=420, pointsize = 12)
 par(mar=c(2.7,2.7,1,1)+0.1)
 plot(nz_aviation[["year"]],nz_aviation[["total"]]/1000,ylim=c(0,5.25), xlim=c(1989,2021),tck=0.01,axes=FALSE,ann=FALSE, type="n",las=1)
-axis(side=1, tck=0.01, las=0, lwd = 1, at = c(1990:2021), labels = c(1990:2021), tick = TRUE)
+axis(side=1, tck=0.01, las=0, lwd = 1, at = c(1990:2022), labels = c(1990:2022), tick = TRUE)
 axis(side=2, tck=0.01, las=2, line = NA,lwd = 1, at = c(0,1,2,3,4,5), labels = c(0,1,2,3,4,5),tick = TRUE)
 axis(side=4, tck=0.01, at = c(0,1,2,3,4,5), labels = FALSE, tick = TRUE)
 box(lwd=1)
@@ -108,7 +112,7 @@ mtext(side=1,line=-1.5,cex=1,"Data: New Zealand’s Greenhouse Gas Inventory 199
 mtext(side=3,cex=1.5, line=-2,expression(paste("New Zealand aviation emissions 1990 2021")) )
 mtext(side=2,cex=1, line=-1.5,expression(paste("million tonnes C", O[2], "-e")))
 mtext(side=4,cex=0.75, line=0.05,R.version.string)
-legend(1990,4.75, bty = "n",cex=1.1, c("Total NZ aviation emissions","International aviation emissions","Domestic aviation emissions"), col =  c("#E41A1C","#4DAF4A","#377EB8") , text.col = 1, lty = 1, pch = c(16,17,15))
+legend(1990,4.75, bty = "n",cex=1.1, c("Total New Zealand aviation emissions","International aviation emissions","Domestic aviation emissions"), col =  c("#E41A1C","#4DAF4A","#377EB8") , text.col = 1, lty = 1, pch = c(16,17,15))
 dev.off()
 
 http://tourismdashboard.mbie.govt.nz/
